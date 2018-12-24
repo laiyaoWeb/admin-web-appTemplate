@@ -1,0 +1,22 @@
+<div id="home-app">
+	home template pages 
+	<el-button type="primary" @click="addPage">添加</el-button>
+</div>
+
+<script type="text/javascript">
+	(function(){
+		new Vue({
+			el: "#home-app",
+			data: {
+				
+			},
+			methods: {
+				addPage: function(){
+					vm.menuItemClick("机构管理", "orgManger", "/orgManger");	
+				}
+			}
+		})
+		
+	})();
+	
+</script>

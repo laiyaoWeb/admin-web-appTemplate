@@ -1,0 +1,145 @@
+*{
+	margin: 0px;
+	padding: 0px;
+}
+ul,li{
+	list-style: none;
+}
+.content {
+    margin-left: 185px;
+    height: 600px;
+    background-color: #f0f0f0;
+}
+.slider-menu{
+	width: 120px;
+	position: absolute;
+}
+a{
+	text-decoration: none;
+}
+.slider-menu>li{
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	background: #000;
+	color: #fff;
+	border-bottom: 1px solid #fff;
+	text-align: center;
+	font-size: 14px;
+}
+.slider-menu>li>a{
+	color: inherit;
+}
+/*下拉菜单样式*/
+
+.treebox{ width: 180px; height: 100%; background: #2f4050;position: absolute;left: 0px; top: 0px; }
+.menu{ overflow: hidden;}
+/*第一层*/
+.menu li.level1>a{ 
+	display:block;
+	height: 45px;
+	line-height: 45px;
+	color: #fff;
+	padding-left: 50px;
+	border-bottom: 1px solid #000; 
+	font-size: 16px;
+	position: relative;
+	transition:all .5s ease 0s;
+ }
+ .menu li.level1 a:hover{ text-decoration: none;background-color: rgb(73, 80, 96);}
+ .menu li.level1 a.current{background-color: rgb(73, 80, 96);}
+
+/*============修饰图标*/
+ .ico{ width: 20px; height: 20px; display:block;   position: absolute; left: 20px; top: 10px; background-repeat: no-repeat; background-image: url(../images/ico1.png); }
+
+ /*============小箭头*/
+ .level1 i{ width: 20px; height: 10px; background-image:url(../images/arrow.png); background-repeat: no-repeat; display: block; position: absolute; right: 20px; top: 20px; }
+.level1 i.down{ background-position: 0 -10px; }
+
+ .ico1{ background-position: 0 0; }
+ .ico2{ background-position: 0 -20px; }
+ .ico3{ background-position: 0 -40px; }
+ .ico4{ background-position: 0 -60px; }
+ .ico5{ background-position: 0 -80px; }
+
+ /*第二层*/
+ .menu li ul{ overflow: hidden; }
+ .menu li ul.level2{ display: none;background-color: rgb(73, 80, 96);  }
+ .menu li ul.level2 li a{
+ 	display: block;
+	height: 45px;
+	line-height: 45px;
+	color: #fff;
+	text-indent: 60px;
+	border-bottom: 1px solid #aaa; 
+	font-size: 14px;
+	transition:all 1s ease 0s;
+ }
+  .menu li ul.level2 li a:hover{
+  	background-color: #001528 !important;;
+  }
+/************************************************************************************/
+
+/* tabs 样式 */
+
+.tabs-wrap{
+	height: 40px;
+	margin: 0px 10px;
+	background-color: rgba(255,255,255,0.5);
+	position: relative;
+	overflow: hidden;
+}
+.tabs{
+	height: 30px;
+	padding: 10px 10px;
+	position: absolute;
+    padding: 2px 10px;
+    overflow: visible;
+    white-space: nowrap;
+    -webkit-transition: left .3s ease;
+    transition: left .3s ease;
+}
+.tabs>li{
+	display: inline-block;
+	height: 30px;
+	background-color: #fff;
+	line-height: 30px;
+	text-align: center;
+	margin-right: 10px;
+	border: 1px solid #ccc;
+	position: relative;
+}
+.tabs>li>a{
+	display: block;
+	color: inherit;
+	font-size: 12px;
+	padding:0px 60px;
+}
+.tabs>li:before{
+	content: '';
+	width: 6px;
+	height: 6px;
+	position: absolute;
+	left: 8px;
+	top: 50%;
+	margin-top: -3px;
+	border-radius: 50%;
+	background: #ccc;
+}
+.tabs>li.active{
+	background-color: #42b983;
+	color: #fff;
+}
+.tabs>li.active:before{
+	background: #fff;
+}
+.delete-icon{
+	width: 20px;
+	height: 100%;
+	line-height: 30px;
+	text-align:center;
+	position: absolute;
+	cursor: pointer;
+	right: 0px;
+	top: 0px;
+}

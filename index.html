@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<!--[if lt IE 9]>
+		    <meta http-equiv="refresh" content="0;url=./html/ie.html" />
+		<![endif]-->
+		<title>微众税银后台管理系统</title>
+		<link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+		<link rel="stylesheet" href="./element-theme/turquoise/index.css">
+		<link rel="stylesheet" href="./css/aui-turquoise.min.css">
+		<link rel="stylesheet" href="./css/font-awesome/css/font-awesome.min.css" />
+	</head>
+	<body>
+		<div v-cloak 
+			ref="auiWrapper" 
+			class="aui-wrapper" 
+			v-bind:class="['aui-header--' + headerSkin,'aui-aside--' + asideSkin,{'aui-wrapper--center': wrapperCenter,'aui-header--fixed': headerFixed,'aui-aside--fixed': asideFixed,'aui-aside--fold': asideFold,'aui-aside--top': asideTop,'aui-control--fixed': controlFixed, 'aui-control--open': controlOpen,'aui-main-tabs__header--fixed': mainTabsHeaderFixed}]"
+			v-loading.fullscreen.lock="loading" 
+			element-loading-text="拼命加载中">
+			<template v-if="!loading">
+				<!-- aui-header -->
+				<header class="aui-header" id="aui-header">
+					<div class="aui-header__hd">
+						<a class="aui-brand aui-brand--lg" href="javascript:;">
+							<img src="./images/vz-logo.png" alt="" />
+						</a>
+						<a class="aui-brand aui-brand--sm" href="javascript:;" :style="{ display: asideFold ? 'inline-block'  : 'none'}">
+							<img style="width: 100%;height: 100%;" src="./images/vz-small-logo.png" alt="" />
+						</a>
+					</div>
+					<div class="aui-header__bd">
+						<!-- aui-header__menu left -->
+						<el-menu class="aui-header__menu aui-header__menu--left" style="width:auto; display:inline-block !important; display:inline; " mode="horizontal">
+							<el-menu-item v-if="!asideTop" index="1" @click="asideFold = !asideFold">
+								<svg class="icon-svg aui-header__icon-menu aui-header__icon-menu--rz180" aria-hidden="true">
+									<use xlink:href="#icon-outdent"></use>
+								</svg>
+							</el-menu-item>
+						</el-menu>
+						<!-- aui-header__menu right -->
+						<el-menu class="aui-header__menu aui-header__menu--right" style="width:auto; display:inline-block !important; display:inline;float: right; " mode="horizontal">
+							<el-menu-item index="3" @click="refreshPageHandle">
+								<svg class="icon-svg aui-header__icon-menu" aria-hidden="true">
+									<use xlink:href="#icon-sync"></use>
+								</svg>
+							</el-menu-item>
+							<el-menu-item index="4" @click="fullscreenHandle">
+								<svg class="icon-svg aui-header__icon-menu" aria-hidden="true">
+									<use xlink:href="#icon-fullscreen"></use>
+								</svg>
+							</el-menu-item>
+							<!--<el-menu-item index="1" @click="searchVisible = !searchVisible" class="aui-search__toggle">
+							              <svg class="icon-svg aui-header__icon-menu" aria-hidden="true"><use xlink:href="#icon-search"></use></svg>
+							        </el-menu-item>-->
+							<el-submenu index="3" :popper-append-to-body="false">
+								<template slot="title">
+									<img class="aui-avatar" src="./images/avatar.png">
+									<span>admin</span>
+								</template>
+								<el-menu-item index="3-1" @click.native="updatePasswordHandle()">修改密码</el-menu-item>
+								<el-menu-item index="3-2" @click.native="logoutHandle()">退出</el-menu-item>
+							</el-submenu>
+							<el-menu-item index="1" @click="controlOpen = !controlOpen">
+								<svg class="icon-svg aui-header__icon-menu" aria-hidden="true">
+									<use xlink:href="#icon-setting"></use>
+								</svg>
+							</el-menu-item>
+						</el-menu>
+
+						<!-- aui-search -->
+						<div class="aui-search" :class="{ 'aui-search--show': searchVisible }">
+							<div class="aui-search__inner">
+								<el-input class="aui-search__input" v-model="search" placeholder="搜索关键字" clearable>
+									<svg slot="prepend" class="icon-svg" aria-hidden="true">
+										<use xlink:href="#icon-search"></use>
+									</svg>
+								</el-input>
+							</div>
+						</div>
+					</div>
+				</header>
+				<!--修改密码-->
+				<el-dialog title="修改密码" :visible.sync="visible" :append-to-body="true">
+					<el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+						<el-form-item label="账号">
+							<span>{{ userName }}</span>
+						</el-form-item>
+						<el-form-item label="原密码" prop="password">
+							<el-input type="password" v-model="dataForm.password"></el-input>
+						</el-form-item>
+						<el-form-item label="新密码" prop="newPassword">
+							<el-input type="password" v-model="dataForm.newPassword"></el-input>
+						</el-form-item>
+						<el-form-item label="确认密码" prop="confirmPassword">
+							<el-input type="password" v-model="dataForm.confirmPassword"></el-input>
+						</el-form-item>
+					</el-form>
+					<span slot="footer" class="dialog-footer">
+				      <el-button @click="visible = false">取消</el-button>
+				      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+				    </span>
+				</el-dialog>
+
+				<!-- aui-aside -->
+				<aside class="aui-aside">
+					<div class="aui-aside__inner">
+						<el-menu v-if="asideMenuVisible" class="aui-aside__menu" :default-active="asideMenuActive" :collapse="asideFold" :unique-opened="true" :collapse-transition="false" :mode="asideTop ? 'horizontal' : 'vertical'">
+							<template v-for="item in menuList">
+								<el-submenu v-if="item.children.length" :index="item.indexNum" :key="item.indexNum">
+									<template slot="title">
+										<!--<i class="icon-svg aui-aside__menu-icon" :class="item.iconClass"></i>-->
+										<svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
+											<use :xlink:href="item.iconClass"></use>
+										</svg>
+										<span slot="title" v-text="item.name"></span>
+									</template>
+									<el-menu-item v-for="itemChild in item.children" :index="itemChild.indexNum" :key="itemChild.indexNum" @click="menuItemClick( itemChild.name, itemChild.id,  itemChild.path)" v-if="itemChild.path !='/invoiceDetail'">
+										<span v-text="itemChild.name"></span>
+									</el-menu-item>
+								</el-submenu>
+								<el-menu-item v-else :index="item.indexNum" :key="item.indexNum" @click="menuItemClick( item.name, item.id, item.path)">
+									<!--<i class="icon-svg aui-aside__menu-icon" :class="item.iconClass"></i>-->
+									<svg class="icon-svg aui-aside__menu-icon" aria-hidden="true">
+										<use :xlink:href="item.iconClass"></use>
+									</svg>
+									<span slot="title" v-text="item.name"></span>
+								</el-menu-item>
+							</template>
+						</el-menu>
+					</div>
+				</aside>
+				<!-- aui-control -->
+				<aside class="aui-control">
+					<div v-if="!headerFixed && controlFixed" class="aui-control__toggle" @click="controlOpen = !controlOpen">
+						<svg class="icon-svg" aria-hidden="true">
+							<use xlink:href="#icon-setting"></use>
+						</svg>
+					</div>
+					<div class="aui-control__inner">
+						<div class="aui-control__bd">
+							<el-tabs class="aui-tabs aui-tabs--flex" v-model="controlTabsActive">
+								<el-tab-pane label="Layout" name="layout">
+									<dl class="aui-control__setting">
+										<dt>Wrapper</dt>
+										<dd>
+											<el-checkbox v-model="wrapperCenter">Center 居中</el-checkbox>
+										</dd>
+									</dl>
+									<dl class="aui-control__setting">
+										<dt>Header</dt>
+										<dd>
+											<el-checkbox v-model="headerFixed" :disabled="wrapperCenter">Fixed 固定</el-checkbox>
+										</dd>
+										<dd>
+											<el-checkbox v-model="headerSkin" true-label="colorful" false-label="white">Colorful 鲜艳</el-checkbox>
+										</dd>
+									</dl>
+									<dl class="aui-control__setting">
+										<dt>Aside</dt>
+										<dd>
+											<el-checkbox v-model="asideFixed" :disabled="wrapperCenter">Fixed 固定</el-checkbox>
+										</dd>
+										<dd>
+											<el-checkbox v-model="asideSkin" true-label="dark" false-label="white">Dark 鲜艳</el-checkbox>
+										</dd>
+										<dd>
+											<el-checkbox v-model="asideTop">Top 至头部</el-checkbox>
+										</dd>
+									</dl>
+									<dl class="aui-control__setting">
+										<dt>Control</dt>
+										<dd>
+											<el-checkbox v-model="controlFixed" :disabled="wrapperCenter">Fixed 固定</el-checkbox>
+										</dd>
+									</dl>
+									<dl class="aui-control__setting">
+										<dt>Main</dt>
+										<dd>
+											<el-checkbox v-model="mainType" true-label="tabs" false-label="standard">Tabs 标签页</el-checkbox>
+										</dd>
+									</dl>
+									<dl class="aui-control__setting">
+										<dt>Main-tabs</dt>
+										<dd>
+											<el-checkbox v-model="mainTabsHeaderFixed" :disabled="wrapperCenter || mainType !== 'tabs'">Header Fixed 固定</el-checkbox>
+										</dd>
+									</dl>
+								</el-tab-pane>
+								<el-tab-pane label="Skins" name="skins">
+									<dl class="aui-control__setting">
+										<dt>Skins</dt>
+										<dd v-for="item in skinList" :key="item.name">
+											<el-radio v-model="skin" :label="item.name" @change="skinChangeHandle">
+												<span class="t-capitalize">{{ item.name }}</span> {{ item.remark }}
+											</el-radio>
+										</dd>
+									</dl>
+								</el-tab-pane>
+							</el-tabs>
+						</div>
+					</div>
+				</aside>
+				<!-- aui-main -->
+				<main class="aui-main">
+					<!-- tabs 标签页 -->
+					<el-dropdown v-show="mainType === 'tabs'" class="aui-main-tabs__tool" @command="handleCommand">
+						<i class="el-icon-arrow-down"></i>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item command="a">关闭当前标签页</el-dropdown-item>
+							<el-dropdown-item command="b">关闭其它标签页</el-dropdown-item>
+							<el-dropdown-item command="c">关闭全部标签页</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+					<el-tabs v-show="mainType === 'tabs'" class="aui-main-tabs aui-tabs" v-model="mainTabsActive" @tab-click="changeTabs" v-loading="contentLoading" @tab-remove="removeTab">
+						<template v-for="item in tabs">
+							<el-tab-pane v-if="item.icon" :label="item.label" :name="item.id" :closable="false">
+								<span slot="label">
+					          		<svg class="aui-content--tabs-icon-nav icon-svg" aria-hidden="true">
+						            	<use :xlink:href="item.icon"></use>
+						           	</svg>
+						           	{{item.label}}
+					          	</span>
+								<div :id="item.id + '-app-wrap'"> {{item.template}}</div>
+							</el-tab-pane>
+							<el-tab-pane v-else :label="item.label" :name="item.id" closable>
+								<div :id="item.id + '-app-wrap'"> </div>
+							</el-tab-pane>
+						</template>
+					</el-tabs>
+				</main>
+				<!-- aui-footer -->
+				<footer class="aui-footer">
+					<p>
+						<a href="https://www.vzoom.com/" target="_blank">深圳微众税银信息服务有限公司版权所有</a>
+					</p>
+				</footer>
+			</template>
+		</div>
+		<script type="text/javascript" src="./js/plugins/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="./js/plugins/polyfill.min.js"></script>
+		<script type="text/javascript" src="./js/plugins/ie9-oninput-polyfill.js.js"></script>
+		<script type="text/javascript" src="./js/plugins/vue2.5.16.min.js"></script>
+		<script type="text/javascript" src="./js/plugins/element-2.4.5/index.js"></script>
+		<script type="text/javascript" src="./icons/iconfont.js"></script>
+		<script type="text/javascript" src="./js/plugins/axios.min.js"></script>
+		<script type="text/javascript" src="./js/api/publicApi.js"></script>
+		<script type="text/javascript" src="./js/router/router.js"></script>
+		<script type="text/javascript" src="./js/plugins/screenfull.js"></script>
+		<script type="text/javascript" src="./js/app/index.js"></script>
+	</body>
+</html>

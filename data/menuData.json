@@ -1,0 +1,37 @@
+[
+	{
+		"name": "首页",
+		"path": "/home",
+		"id": "home",
+		"indexNum": "1",
+		"iconClass": "#icon-home",
+		"children": []
+	},
+	{
+		"name": "企业管理",
+		"path": "#",
+		"indexNum": "2",
+		"iconClass": "#icon-bank",
+		"children": [
+			{
+				"name": "机构管理",
+				"path": "/orgManger",
+				"id": "orgManger",
+				"indexNum": "2-1"
+			},
+			{
+				"name": "发票管理",
+				"path": "/billManger",
+				"id": "billManger",
+				"indexNum": "2-2"
+			},
+			{
+				"name": "融资记录",
+				"path": "/financeManger",
+				"id": "financeManger",
+				"indexNum": "2-3"
+			}
+		]
+
+	}
+]
